@@ -29,7 +29,7 @@ void *network_thread(void *arg)
 	struct sockaddr_in addr_client;
 
 	struct timeval tv;
-	fd_set rfd, tfd;
+	fd_set rfd, tfd; // 변수를 왜 2개나 설정해서 사용할까? fd_set은 하나면 될꺼 같은데.
 	int fd;
 
 	printf("[%d] thread started with arg \"%s\"\n", pid, (char *)arg);
@@ -71,6 +71,7 @@ void *network_thread(void *arg)
 		tv.tv_sec = 10;
 		tv.tv_usec = 0;
 		tfd = rfd;
+		// FD_SETSIZE ==> file descriptor table전체를 보겠다는 뜻.
 		ret = select(FD_SETSIZE, &tfd, NULL, NULL, &tv);
 		if(ret == -1) {
 			printf("[%d] error: %s\n", pid, strerror(errno));
