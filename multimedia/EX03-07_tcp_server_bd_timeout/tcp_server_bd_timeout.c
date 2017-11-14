@@ -76,7 +76,7 @@ void *network_thread(void *arg)
 	printf("[%d] Input message(Q for quit): ", pid);
 
 	for(;;) {
-#if 0
+#if 0 // 기존 코드. 1:1 연결
 		len = read(sfd_client, rxbuf, MAX_BUF);
 		if(len > 0) {
 			rxbuf[len] = 0;

@@ -105,6 +105,7 @@ int main(int argc, char **argv)
 	}
 
 	for(;;) {
+		// CONNECT_STATE_CONNECTED는 전역변수이다.
 		if(connect_state != CONNECT_STATE_CONNECTED) continue;
 		if(fgets(txbuf, MAX_BUF, stdin)) {
 			fflush(stdin);
