@@ -12,7 +12,7 @@
 ![Stream](./img/stream_tcp.gif)
 - **연결이 된 후에 보낸다.**
 - 서버측
-  - `socket()`
+  - `socket()` : 소켓을 생성하여 반환한다.
   - `bind()` : 프로세스가 동작하는 시스템에 **나(=실행할 프로그램)**의 주소를 **등록**시키는 행위.
   - `listen()` :
     - 동시에 모든 클라이언트에 대한 요청을 할 수 없다.
@@ -31,6 +31,87 @@
   - `write()`
   - `read()` : **`blocking` 함수**
   - `close()`
+
+#### socket()
+- 소켓을 생성하여 반환한다.
+- 리턴 값.
+  - 성공시 : **파일 식별자** (파일 디스크립터 테이블의 index)
+  - 실패시 : 실패했을경우에는 -1을 반환하며, 적당한 errno 값을 설정.
+
+#### bind()
+- 소켓에 주소를 지정한다.
+- 성공할경우 0을 실패했을경우에는 -1을 반환하며, 적당한 errno 값을 설정.
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+int bind(int sockfd, struct sockaddr *my_addr, socklen_t addrlen);
+
+... 다음과 같은 코드 패턴을 가진다.
+
+struct sockaddr_in addr_server;
+addr_server.sin_family = AF_INET;
+addr_server.sin_addr.s_addr = htonl(INADDR_ANY);
+addr_server.sin_port = htons(PORT_ADDR);
+len = sizeof(addr_server);
+ret = bind(sfd_server, (struct sockaddr *)&addr_server, len);
+```
+
+#### listen()
+- 연결 요청 대기큐를 생성한다.
+
+```c
+#include <sys/socket.h>
+int listen(int s, int backlog);
+```
+
+#### accept()
+- 클라이언트의 연결 요청을 수락하는 `blocking`함수.
+- 리턴시
+  - **성공 시 클라이언트 소켓의 파일 식별자** 리턴.
+  - 실패 시 `errno` 설정 후 -1 리턴.
+- 인자
+  - `addr` 클라이언트 소켓주소를 넘긴다.(누가 연결했는지 알 수 있다.)
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
+```
+
+#### connect()
+- 소켓에 연결을 시도하는 `blocking` 함수.
+- 성공할경우 0을 실패했을경우에는 -1을 반환하며, 적당한 errno 값을 설정.
+- 인자
+  - `sockfd` : 파일 식별자
+  - `serv_addr` : 서버의 소켓 주소.
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int  connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+```
+
+
+#### htonl(), htons()
+- cpu 아키텍처를 따르는 바이트 order방식의 32비트 혹은 16비트 ip주소를 big endian방식으로 변환하는 함수들이다.
+  - Intel 은 Little Endian 방식으로 저장되어 있다.
+
+```c
+#include <netinet/in.h>
+unsigned short int htons(unsigned short int hostshort);
+unsigned long int htonl(unsigned long int hostshort);
+```
+
+#### ntohl(), ntohs()
+- big endian방식으로 저장되어 있는 32비트 혹은 16비트 ip주소를 cpu 아키텍처를 따르는 바이트 order방식으로 변환하는 함수.
+
+```c
+#include <netinet/in.h>
+unsigned short int ntohs(unsigned short int hostshort);
+unsigned long int ntohl(unsigned long int hostshort);
+```
 
 #### 반이중 통신 방식
 - [TCP-Client Half-Duplex](./multimedia/EX03-02_tcp_client_pc/tcp_client_pc.c)
