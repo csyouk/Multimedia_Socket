@@ -32,6 +32,11 @@
   - `read()` : **`blocking` 함수**
   - `close()`
 
+- [TCP-Client Half-Duplex](./multimedia/EX03-01_tcp_server_bd/tcp_server_bd.c)
+- [TCP-Server Half-Duplex](./multimedia/EX03-02_tcp_client_pc/tcp_client_pc.c)
+
+- [TCP-Client Full-Duplex](./multimedia/EX03-03_tcp_server_bd_th/tcp_server_bd_th.c)
+- [TCP-Server Full-Duplex](./multimedia/EX03-04_tcp_client_pc_th/tcp_client_pc_th.c)
 
 ## UDP
 ![Datagram](./img/UDPsockets.jpg)
