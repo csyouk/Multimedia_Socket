@@ -193,8 +193,10 @@ int select (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, stru
     - fd비트를 1로 set
   - `void FD_ZERO(int fd, fd_set *set);`
     - 모든 비트를 0으로
-  - `void FD_ISSET(int fd, fd_set *set);`
+  - `int FD_ISSET(int fd, fd_set *set);`
     - fd비트 값을 리턴.
+      - set되어 있을 시 1
+      - clear되어 있을 시 0
 
 - 다음은 `fd_set` 구조체의 선언부이다.
 ```c
