@@ -79,6 +79,7 @@ void *network_thread(void *arg)
 
 		for(fd = 0; fd < FD_SETSIZE; fd++) {
 			if(!FD_ISSET(fd, &tfd)) continue;
+// 새로운 커넥션이 생성되었을때.
 			if(fd == sfd_server) {
 				sfd_client = accept(sfd_server, (struct sockaddr *)&addr_client, &len);
 				if(sfd_client == -1) {
@@ -86,22 +87,29 @@ void *network_thread(void *arg)
 					exit(EXIT_FAILURE);
 				}
 #if 1
+// 이 부분들이 빠지면 원래 코드와 똑같다.
+// rfd에 체크가 되어있으면, 서버가 아닌 것들에 대해서, (즉, 다른 클라이언트 들에게)
+// 메세지를 보낸다.
+// 지금 코드는, 연결이 새로 생성되었을때, 모든 클라이언트들에게 입장 메세지를 보내는 코드이다.
 				{
 					int fd_temp;
 					for(fd_temp = 0; fd_temp < FD_SETSIZE; fd_temp++) {
 						if(!FD_ISSET(fd_temp, &rfd)) continue;
 						if(fd_temp == sfd_server) continue;
 						//if(fd_temp == fd) continue;
-						sprintf(rxbuf, "new client entered!!!\n");
+						sprintf(rxbuf, "New client %d entered!!!\n", fd_temp);
 						write(fd_temp, rxbuf, strlen(rxbuf)+1);
 					}
 				}
 #endif
+// 연결이 될때마다, rfd에 값이 세팅 될 것이다. (FD_SET())
 				FD_SET(sfd_client, &rfd);
 				printf("[%d] connected (fd=%d)\n", pid, sfd_client);
 			}
+// 이미 연결이 되어있는 클라이언트에 대해서 메세지를 보내는 경우.
 			else {
 				len = read(fd, rxbuf, MAX_BUF);
+				// 연결이 종료된 경우.
 				if(len == 0) {
 					close(fd);
 					FD_CLR(fd, &rfd);
@@ -113,7 +121,8 @@ void *network_thread(void *arg)
 							if(!FD_ISSET(fd_temp, &rfd)) continue;
 							if(fd_temp == sfd_server) continue;
 							//if(fd_temp == fd) continue;
-							sprintf(rxbuf, "a client exited!!!\n");
+							// 나머지 클라이언트들에게 클라이언트 한명이 나갔음을 알려줌.
+							sprintf(rxbuf, "A %d client exited!!!\n", fd_temp);
 							write(fd_temp, rxbuf, strlen(rxbuf)+1);
 						}
 					}
